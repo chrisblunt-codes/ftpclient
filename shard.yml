@@ -1,0 +1,24 @@
+name: ftpclient
+version: 0.3.0
+
+authors:
+  - Chris Blunt <contact@chrisblunt.codes>
+
+homepage: https://chrisblunt.codes
+
+description: Tiny FTP client
+
+license: MIT
+repository: https://github.com/chrisblunt-codes/ftpclient
+crystal: ">= 1.17.0"
+
+targets:
+  pop3client:
+    main: src/ftpclient.cr
+
+development_dependencies:
+  spec:
+    github: crystal-lang/crystal-spec
+
+documentation: https://chrisblunt-codes.github.io/ftpclient
+
