@@ -3,10 +3,5 @@
 
 require "./spec_helper"
 
-describe Ftpclient do
-  # TODO: Write tests
-
-  it "works" do
-    false.should eq(true)
-  end
+describe FtpClient do
 end
