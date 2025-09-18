@@ -3,6 +3,7 @@
 
 module FtpClient
   class ConnectionError   < Exception; end
+  class DataTransferError < Exception; end
   class LoginError        < Exception; end
   class ProtocolError     < Exception; end
 end

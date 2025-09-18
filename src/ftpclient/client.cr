@@ -51,6 +51,7 @@ module FtpClient
     def ok?(line : String) : Bool
       return true if line.starts_with? "331"
       return true if line.starts_with? "2"
+      return true if line.starts_with? "150"
 
       false
     end
@@ -71,6 +72,24 @@ module FtpClient
 
     def close
       @socket.try &.close
+    end
+
+    private def read_data_connection(host : String, port : Int32) : String
+      io = IO::Memory.new
+
+      data_sock = TCPSocket.new(host, port)
+      data_sock.read_timeout  = @read_timeout
+      data_sock.write_timeout = @write_timeout
+
+      while line = data_sock.gets
+        io << line << "\r\n"
+      end
+
+      io.to_s.strip
+    rescue ex
+      raise DataTransferError.new("Data transfer failed #{ex.message}")
+    ensure
+      data_sock.try &.close
     end
   end
 end
