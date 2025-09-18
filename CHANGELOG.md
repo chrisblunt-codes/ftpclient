@@ -6,7 +6,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 ### Added
-- (nothing yet)
+- Add connect
+- Add Login command
 
 ### Changed
 - (nothing yet)
