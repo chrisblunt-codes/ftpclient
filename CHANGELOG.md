@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 - Add connect
 - Add Login command
+- Add PASV command
 
 ### Changed
 - (nothing yet)

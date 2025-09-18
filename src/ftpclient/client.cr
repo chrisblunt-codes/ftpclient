@@ -55,6 +55,20 @@ module FtpClient
       false
     end
 
+    def enter_passive_mode : Tuple(String, Int32)
+      send_line("PASV")
+      response = read_line
+
+      # Extract IP and port from response like "227 Entering Passive Mode (192,168,1,1,195,133)"
+      if match = response.match(/\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/)
+        ip   = "#{match[1]}.#{match[2]}.#{match[3]}.#{match[4]}"
+        port = match[5].to_i * 256 + match[6].to_i
+        {ip, port}
+      else
+        raise ProtocolError.new("Failed to parse PASV response (#{response})")
+      end
+    end
+
     def close
       @socket.try &.close
     end
