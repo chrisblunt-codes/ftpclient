@@ -12,8 +12,8 @@ module FtpClient
     @socket : TCPSocket?
 
     def initialize(@host : String, @port : Int32 = 21)
-      @read_timeout   = 10.seconds
-      @write_timeout  = 10.seconds
+      @read_timeout   = 30.seconds
+      @write_timeout  = 30.seconds
     end
 
     def connect! : String
@@ -49,24 +49,26 @@ module FtpClient
     end
 
     def ok?(line : String) : Bool
+      return true if line.starts_with? "350"
       return true if line.starts_with? "331"
       return true if line.starts_with? "2"
       return true if line.starts_with? "150"
+      return true if line.starts_with? "125"
 
       false
     end
 
     def enter_passive_mode : Tuple(String, Int32)
       send_line("PASV")
-      response = read_line
+      line = read_line
 
       # Extract IP and port from response like "227 Entering Passive Mode (192,168,1,1,195,133)"
-      if match = response.match(/\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/)
+      if match = line.match(/\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/)
         ip   = "#{match[1]}.#{match[2]}.#{match[3]}.#{match[4]}"
         port = match[5].to_i * 256 + match[6].to_i
         {ip, port}
       else
-        raise ProtocolError.new("Failed to parse PASV response (#{response})")
+        raise ProtocolError.new("Failed to parse PASV response (#{line})")
       end
     end
 
@@ -74,10 +76,10 @@ module FtpClient
       @socket.try &.close
     end
 
-    private def read_data_connection(host : String, port : Int32) : String
+    private def read_data_connection(host : String, port : Int32, timeout : Time::Span =  30.seconds) : String
       io = IO::Memory.new
 
-      data_sock = TCPSocket.new(host, port)
+      data_sock = TCPSocket.new(host, port, connect_timeout: timeout.to_i)
       data_sock.read_timeout  = @read_timeout
       data_sock.write_timeout = @write_timeout
 
