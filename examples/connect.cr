@@ -3,6 +3,11 @@
 
 require "../src/ftpclient" 
 
-client = FtpClient::Client.new("ftp.dlptest.com")
+USERNAME    = "test"
+PASSWORD    = "secret"
+SERVER      = "127.0.0.1"
+PORT        = 2000
+
+client = FtpClient::Client.new(SERVER, PORT)
 line = client.connect!
 puts line

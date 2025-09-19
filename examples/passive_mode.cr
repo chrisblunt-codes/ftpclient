@@ -3,10 +3,12 @@
 
 require "../src/ftpclient"
 
-USERNAME = "dlpuser"
-PASSWORD = "rNrKYTX9g7z3RgJRmxWuGHbeu"
+USERNAME = "test"
+PASSWORD = "secret"
+SERVER   = "127.0.0.1"
+PORT     = 2000
 
-client = FtpClient::Client.new("ftp.dlptest.com")
+client = FtpClient::Client.new(SERVER, PORT)
 client.connect!
 client.login!(USERNAME, PASSWORD)
 ip, port = client.enter_passive_mode
