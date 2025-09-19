@@ -4,18 +4,19 @@
 require "../src/ftpclient"
 require "../src/ftpclient/errors"
 
-USERNAME    = "test"
-PASSWORD    = "secret"
-SERVER      = "127.0.0.1"
-PORT        = 2000
-FILENAME    = "test.zip"
+USERNAME     = "test"
+PASSWORD     = "secret"
+SERVER       = "127.0.0.1"
+PORT         = 2000
+FILENAME     = "test.zip"
+DOWNLOAD_DIR = "~/Downloads"
 
 client = FtpClient::Client.new(SERVER, PORT)
 
 begin
   client.connect!
   client.login!(USERNAME, PASSWORD)
-  client.retr(remote_file: FILENAME, local_file: "./examples/data/#{FILENAME}", resume: true)
+  client.retr(remote_file: FILENAME, local_file: "#{DOWNLOAD_DIR}/#{FILENAME}", resume: true)
 rescue ex : FtpClient::DownloadError
   puts "ERROR: #{ex.message}"
 ensure
