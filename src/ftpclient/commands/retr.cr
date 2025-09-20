@@ -64,7 +64,6 @@ module FtpClient
             bytes_written += bytes_read
             percentage = (bytes_written * 100 / total_size).to_i
             puts "Downloaded #{bytes_written}/#{total_size} bytes (#{percentage}%)"
-            sleep 0.1.seconds
           end
         end
       end
