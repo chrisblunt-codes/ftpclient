@@ -72,6 +72,15 @@ module FtpClient
       end
     end
 
+    def set_tranfer_type(type : String) : Nil
+      send_line "TYPE #{type}"
+      line = read_line
+
+      unless ok?(line)
+        raise ProtocolError.new("Failed to set transfer type (#{line})")
+      end
+    end
+    
     def close
       @socket.try &.close
     end

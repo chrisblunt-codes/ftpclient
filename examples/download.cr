@@ -8,8 +8,8 @@ USERNAME     = "test"
 PASSWORD     = "secret"
 SERVER       = "127.0.0.1"
 PORT         = 2000
-FILENAME     = "test.zip"
-DOWNLOAD_DIR = "~/Downloads"
+FILENAME     = "test3.zip"
+DOWNLOAD_DIR = "/var/tmp"
 
 client = FtpClient::Client.new(SERVER, PORT)
 

@@ -7,6 +7,8 @@ module FtpClient
   module Commands
     module Retr
       def retr(remote_file : String, local_file : String, resume : Bool = false, timeout : Time::Span = 30.seconds) : Nil
+        set_tranfer_type("I") # binary mode
+
         offset = resume && File.exists?(local_file) ? File.size(local_file) : 0
 
         resume(offset)
@@ -15,14 +17,6 @@ module FtpClient
 
       private def resume(offset : Int32 | Int64)
         if offset > 0
-          # Switch to binary mode
-          send_line "TYPE I"
-          line = read_line
- 
-          unless ok?(line)
-            raise ProtocolError.new("Failed to resume transfer (#{line})")
-          end
- 
           send_line "REST #{offset}"
           line = read_line
           unless ok?(line)
@@ -39,7 +33,7 @@ module FtpClient
         raise ProtocolError.new("Failed to download file (#{line})") unless ok?(line)
 
         with_data_connection(ip, port) do |data_sock|
-          save_file(local_file, offset, data_sock, resume: true)
+          save_file(remote_file, local_file, offset, data_sock, resume: true)
         end
 
         if download_ok?(read_line)
@@ -59,16 +53,29 @@ module FtpClient
         data_sock.try &.close
       end
 
-      private def save_file(local_file : String,  offset : Int32 | Int64, data_sock : TCPSocket,resume : Bool = false) 
+      private def save_file(remote_file : String, local_file : String,  offset : Int32 | Int64, data_sock : TCPSocket, resume : Bool = false) 
+        total_size = get_file_size(remote_file)
+
         File.open(local_file, resume ? "ab" : "wb") do |file|
           bytes_written = offset
           buffer = Bytes.new(4096)
           while (bytes_read = data_sock.read(buffer)) > 0
             file.write(buffer[0, bytes_read])
             bytes_written += bytes_read
-            puts "Downloaded #{bytes_written} bytes"
+            percentage = (bytes_written * 100 / total_size).to_i
+            puts "Downloaded #{bytes_written}/#{total_size} bytes (#{percentage}%)"
             sleep 0.1.seconds
           end
+        end
+      end
+
+      private def get_file_size(remote_file : String) : Int64
+        send_line("SIZE #{remote_file}")
+        line = read_line
+        if line =~ /^213 (\d+)/
+          $1.to_i64
+        else
+          raise ProtocolError.new("Failed to parse SIZE response (#{line})")
         end
       end
 
