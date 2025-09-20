@@ -32,23 +32,27 @@ module FtpClient
       raise ConnectionError.new("Connection failed #{ex.message}")
     end
 
-    def read_line : String
+    def close
+      @socket.try &.close
+    end
+
+    private def read_line : String
       line = socket!.gets
       line ||= ""
       line.strip
     end
 
-    def send_line(line : String) : Nil
+    private def send_line(line : String) : Nil
       sock = socket!
       sock << line << "\r\n"
       sock.flush
     end
 
-    def socket! : TCPSocket
+    private def socket! : TCPSocket
       @socket || raise "Not connected"
     end
 
-    def ok?(line : String) : Bool
+    private def ok?(line : String) : Bool
       return true if line.starts_with? "350"
       return true if line.starts_with? "331"
       return true if line.starts_with? "2"
@@ -58,7 +62,7 @@ module FtpClient
       false
     end
 
-    def enter_passive_mode : Tuple(String, Int32)
+    private def enter_passive_mode : Tuple(String, Int32)
       send_line("PASV")
       line = read_line
 
@@ -72,7 +76,7 @@ module FtpClient
       end
     end
 
-    def set_tranfer_type(type : String) : Nil
+    private def set_tranfer_type(type : String) : Nil
       send_line "TYPE #{type}"
       line = read_line
 
@@ -81,10 +85,6 @@ module FtpClient
       end
     end
     
-    def close
-      @socket.try &.close
-    end
-
     private def read_data_connection(host : String, port : Int32, timeout : Time::Span =  30.seconds) : String
       io = IO::Memory.new
 
