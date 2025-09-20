@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - Add LIST command
 - Add RETR command with resume (REST)
 - Add binary mode support (TYPE I)
+- Add SIZE command and show transfer progress as a percentage
 
 ### Changed
 - (nothing yet)

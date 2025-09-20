@@ -50,7 +50,8 @@ speedbump --latency=2000ms --port=2000 127.0.0.1:2121
  
 ### MUST
 - [ ] Add parsing for `LIST` command output to extract file metadata (name, size, date, permissions).
-- [ ] Implement `SIZE` command to fetch remote file size and show percentage 
+- [x] Implement `SIZE` command to fetch remote file size and show percentage 
+- [ ] Implement `STOR` command to upload files.
 - [ ] Add FTPS support using TLS/SSL for secure control and data connections.
 - [ ] Write unit tests for FTP client functions using Crystal spec.
 
